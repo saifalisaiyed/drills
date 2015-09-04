@@ -10,18 +10,6 @@ $("body").ready(function () {
     if (!'speechSynthesis' in window)
         alert("Sorry, speech synthesis is not supported. Try using Chrome.");
 
-    loadDefaults("#actions", [
-        "1 2 3 2 1",
-        "1 1 2 5 6",
-        "1 5 2 3 4",
-        "2 3 2 3 slip, 3 2 3 2 slip",
-        "fake jab, throw 2 1 2",
-        "jab, left hook to body, left hook to head, right uppercut, left hook",
-        "jab to head, cross, left hook to body",
-        "double jab, straight right, slip, straight right",
-        "5 2 3 2",
-        "1 2, duck to right, 4 3",
-    ]);
 });
 
 $("#start").click(function () {
@@ -93,12 +81,6 @@ function getCommand(time) {
 function endRound() {
     window.speechSynthesis.cancel();
     say("Round over. Get some water.");
-}
-
-function loadDefaults(jqueryElement, array) {
-    for (var i = 0; i < array.length; i++)
-        $(jqueryElement).append(array[i] + "\n");
-
 }
 
 function getActions() {
