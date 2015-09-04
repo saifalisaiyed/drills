@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
     <style>
       p{
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -28,7 +31,7 @@
     <script>
       $(function() {
         
-        // initialize jQuery UI components
+
         $( "#check" ).button();
         $( "#format" ).buttonset();  
         $( "#radio" ).buttonset();
@@ -47,7 +50,7 @@
           step: 0.01
         });
           
-        // autoresize text area
+
         $(document)
   		    .one('focus.textarea', '.autoExpand', function(){
       			var savedValue = this.value;
@@ -62,7 +65,7 @@
               console.log(this.scrollHeight , this.baseScrollHeight);
       			rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 17);
       			this.rows = minRows + rows;
-  		});
+  		    });
       });
     </script>
   </head>
