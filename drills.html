@@ -1,0 +1,98 @@
+
+<!-- saved from url=(0037)http://crclayton.com/projects/drills/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="./drills_files/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="./drills_files/jquery-ui.css">
+  <script src="./drills_files/jquery-ui.min.js"></script>
+ 
+ <style>
+    p{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size:16px;
+    }
+   </style>
+ 
+  <script>
+    $(function() {
+      $( "#check" ).button();
+      $( "#format" ).buttonset();  
+      $( "#radio" ).buttonset();
+      
+      $( "button" )
+        .button()
+        .click(function( event ) {
+          event.preventDefault();
+        });
+      
+      $( "#rate" ).slider({
+        range: "max",
+        min: 0,
+        max: 2,
+        value: 1,
+        step: 0.01
+      });
+  
+    });
+  </script>
+
+</head>
+
+<body>
+
+<p>Round Length (min)</p>
+  <p id="radio" class="ui-buttonset">
+    <input type="radio" id="radio1" name="radio" value="1" class="ui-helper-hidden-accessible">
+    <label for="radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button"><span class="ui-button-text">1</span></label>
+    <input type="radio" id="radio2" name="radio" checked="checked" value="2" class="ui-helper-hidden-accessible">
+    <label for="radio2" class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only" role="button"><span class="ui-button-text">2</span></label>
+    <input type="radio" id="radio3" name="radio" value="3" class="ui-helper-hidden-accessible">
+    <label for="radio3" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button"><span class="ui-button-text">3</span></label>
+  </p>
+
+<p>Activity Intervals (sec)</p>
+
+  <p id="format" class="ui-buttonset">
+    <input type="checkbox" id="check1" value="10" class="ui-helper-hidden-accessible">
+    <label for="check1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button"><span class="ui-button-text">10</span></label>
+    <input type="checkbox" id="check2" checked="checked" value="20" class="ui-helper-hidden-accessible">
+    <label for="check2" class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only" role="button"><span class="ui-button-text">20</span></label>
+    <input type="checkbox" id="check3" checked="checked" value="30" class="ui-helper-hidden-accessible">
+    <label for="check3" class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only" role="button"><span class="ui-button-text">30</span></label>
+    <input type="checkbox" id="check4" checked="checked" value="40" class="ui-helper-hidden-accessible">
+    <label for="check4" class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only" role="button"><span class="ui-button-text">40</span></label>
+    <input type="checkbox" id="check5" value="50" class="ui-helper-hidden-accessible">
+    <label for="check5" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button"><span class="ui-button-text">50</span></label>
+    <input type="checkbox" id="check6" value="60" class="ui-helper-hidden-accessible">
+    <label for="check6" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button"><span class="ui-button-text">60</span></label>
+  </p>
+
+  <p>Activities</p>
+
+  <p>
+    <textarea id="actions" rows="10" cols="60">1 2 3 2 1
+1 1 2 5 6
+1 5 2 3 4
+2 3 2 3 slip, 3 2 3 2 slip
+fake jab, throw 2 1 2
+jab, left hook to body, left hook to head, right uppercut, left hook
+jab to head, cross, left hook to body
+double jab, straight right, slip, straight right
+5 2 3 2
+1 2, duck to right, 4 3
+</textarea>
+  </p>
+
+  <p>Speech Rate</p>
+  <div id="rate" style="width:300px" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 50%;"></span></div>
+
+  <p>
+    <button id="start" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button"><span class="ui-button-text">start</span></button>
+    <button id="end" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button"><span class="ui-button-text">end</span></button>
+  </p>
+
+
+<script src="./drills_files/drills.js"></script>
+
+</body></html>
