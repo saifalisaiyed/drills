@@ -2,54 +2,55 @@
 var interval;
 
 var actions;
-var intervals; 
+var intervals;
 var workoutLength;
 
-$("body").ready(function () {
-
-    if (!'speechSynthesis' in window)
-        alert("Sorry, speech synthesis is not supported. Try using Chrome.");
-
-});
+var ROUND_OVER = "Round over.";
+var WORKOUT_CANCELLED = "Workout cancelled.";
+var ACTIVITY_OVER = "Done";
 
 $("#start").click(function () {
+    go();
+});
 
-    
+function go(){
+  
     actions = getActions();
     intervals = getIntervals();
     workoutLength = +getRoundLength() * 60;
 
     clearInterval(interval);
-            
-    var duration = 10;
+
+    var duration = 5;
     var elapsed = 0;
 
     say("Starting in " + duration + " seconds.");
 
     var loop = function () {
         clearInterval(interval);
-        
-        console.log(elapsed + " seconds passed");
-        
-        if (elapsed > workoutLength ){ //|| actions.length === 0) {
+
+        if (elapsed > workoutLength || actions.length < 1) {
             endRound();
             return;
         }
-        
+
+        if (elapsed > 0) say(ACTIVITY_OVER);
+
         duration = +getInterval();
         elapsed += duration;
-                
+
         say(getCommand(duration));
         interval = setInterval(loop, duration * 1000);
-    }
+    };
+
     interval = setInterval(loop, duration * 1000);
-    
-});
+
+}
 
 $("#end").click(function () {
     window.speechSynthesis.cancel();
     clearInterval(interval);
-    say("Workout cancelled.");
+    say(WORKOUT_CANCELLED);
 });
 
 function say(text) {
@@ -60,7 +61,7 @@ function say(text) {
     msg.rate = getSpeechRate();
     msg.text = text;
     msg.lang = 'en-US';
-    
+
     console.log('"' + text + '"');
     speechSynthesis.speak(msg);
 }
@@ -75,32 +76,38 @@ function getInterval() {
 
 function getCommand(time) {
     var action = getAction();
+    actions.remove(action);
     return time + " seconds of " + action;
 }
 
 function endRound() {
     window.speechSynthesis.cancel();
-    say("Round over. Get some water.");
+    say(ROUND_OVER);
+    window.setTimeout(go, +getBreakLength() * 1000 )
 }
 
 function getActions() {
     return $("#actions").val()
         .split("\n")
-        // remove empty/null/undefined components
+    // remove empty/null/undefined components
         .filter(function (e) { return e === 0 || e });
 }
 
-function getIntervals(){
-    return $('input:checkbox:checked').map(function () {
+function getIntervals() {
+    return $('#intervals input:checkbox:checked').map(function () {
         return +this.value;
     }).get();
 }
 
-function getRoundLength(){
-    return +$("#radio :radio:checked").val();
+function getRoundLength() {
+    return +$("#round input:radio:checked").val();
 }
 
-function getSpeechRate(){
+function getBreakLength() {
+    return +$("#break input:radio:checked").val();
+}
+
+function getSpeechRate() {
     return +$("#rate").slider("values", 0);
 }
 

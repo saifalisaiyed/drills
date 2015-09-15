@@ -3,38 +3,43 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="js/jquery.csv-0.71.min.js"></script>
     <style>
       p{
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size:16px;
       }
       
-  textarea{  
-  
-    box-sizing: padding-box;
-    overflow:hidden;
-  
-    font-size:14px;
-    border-radius:8px;
-    border:1px solid  #c1c1c1;
-  }
+      textarea{  
+      
+      
+        font-size:14px;
+        border-radius:8px;
+        border:1px solid  #c1c1c1;
+      }
+      
+      .t{
+        width:355px;
+      }
+      
+      .right{
+        text-align:right;
+      }
     </style>
     <script>
+      var csv_data;
+      
       $(function() {
         
+        
+        if (!('speechSynthesis' in window)){
+            alert("Sorry, speech synthesis is not supported. Try using Chrome or Safari for iOS7.");
+        }
 
-        $( "#check" ).button();
-        $( "#format" ).buttonset();  
-        $( "#radio" ).buttonset();
+        $( "#round, #break, #intervals, #type" ).buttonset();
         
         $( "button" )
           .button()
@@ -43,45 +48,88 @@
           });
         
         $( "#rate" ).slider({
-          range: "max",
-          min: 0,
-          max: 2,
-          value: 1,
-          step: 0.01
+            range: "max",
+            min: 0,
+            max: 2,
+            value: 1.1,
+            step: 0.01
         });
           
-
-        $(document)
-  		    .one('focus.textarea', '.autoExpand', function(){
-      			var savedValue = this.value;
-      			this.value = '';
-      			this.baseScrollHeight = this.scrollHeight;
-      			this.value = savedValue;
-  		    })
-  		    .on('input.textarea', '.autoExpand', function(){
-      			var minRows = this.getAttribute('data-min-rows')|0,
-      				 rows;
-      			this.rows = minRows;
-              console.log(this.scrollHeight , this.baseScrollHeight);
-      			rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 17);
-      			this.rows = minRows + rows;
-  		    });
+        $.ajax({
+            type: "GET",
+            url: "data/activities.csv",
+            dataType: "text",
+            success: function(d) {csv_data = d; loadActivities(getActivityBank(csv_data));}
+         });         
+      
+      
+      $("#type :radio").change(function(){
+          var acts = getActivityBank(csv_data);
+          loadActivities(acts);
       });
+      
+      function getActivityBank(d){
+            var a = $.csv.toObjects(d);
+            var selected = $("#type :radio:checked").val();
+             
+            var selected_a = [];
+            for (var i = 0 ; i < a.length ; i++){
+                selected_a.push(a[i][selected])
+            }
+              
+            return selected_a.filter(function(n){ return n != undefined && n != "" }); 
+      }
+
+      function loadActivities(activities){
+        
+              $("#actions").text("");
+
+              for(var i = 0; i < activities.length ; i++){
+                $("#actions").append(activities[i] + "\n");
+              }
+             
+              $("#actions").attr("rows", activities.length + 1);
+       }
+       
+             });
     </script>
   </head>
   
   <body>
-    <p>Round Length (min)</p>
-    <p id="radio" class="ui-buttonset">
-      <input type="radio" id="radio1" name="radio" value="1">
-      <label for="radio1" role="button">1</label>
-      <input type="radio" id="radio2" name="radio" checked="checked" value="2">
-      <label for="radio2" role="button">2</label>
-      <input type="radio" id="radio3" name="radio" value="3">
-      <label for="radio3" role="button">3</label>
-    </p>
+    <table class="t">
+      <tr>
+        <td>
+          <p>Round Length (min)</p>
+        </td>
+        <td class="right">
+          <p>Break Length (seconds)</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p id="round" class="ui-buttonset">
+            <input type="radio" id="r1" name="round" value="1">
+            <label for="r1" role="button">1</label>
+            <input type="radio" id="r2" name="round" checked="checked" value="2">
+            <label for="r2" role="button">2</label>
+            <input type="radio" id="r3" name="round" value="3">
+            <label for="r3" role="button">3</label>
+          </p>
+        </td>
+        <td class="right">
+          <p id="break" class="ui-buttonset">
+            <input type="radio" id="b1" name="break" value="30">
+            <label for="b1" role="button">30</label>
+            <input type="radio" id="b2" name="break" checked="checked" value="60">
+            <label for="b2" role="button">60</label>
+            <input type="radio" id="b3" name="break" value="90">
+            <label for="b3" role="button">90</label>
+          </p>
+        </td>
+      </tr>
+    </table>
     <p>Activity Intervals (sec)</p>
-    <p id="format" class="ui-buttonset">
+    <p id="intervals" class="ui-buttonset">
       <input type="checkbox" id="check1" value="10">
       <label for="check1" role="button">10</label>
       <input type="checkbox" id="check2" checked="checked" value="20">
@@ -95,22 +143,20 @@
       <input type="checkbox" id="check6" value="60">
       <label for="check6" role="button">60</label>
     </p>
-    <p>Activities (each on seperate lines)</p>
+    <p>Activities (you can edit these!)</p>
+    <p id="type" class="ui-buttonset">
+      <input type="radio" id="t1" name="type" value="Calisthenics">
+      <label for="t1" role="button">Calisthenics</label>
+      <input type="radio" id="t2" name="type" checked="checked" value="Combos">
+      <label for="t2" role="button">Combos</label>
+      <input type="radio" id="t3" name="type" value="Drills">
+      <label for="t3" role="button">Drills</label>
+    </p>
     <p>
-      <textarea id="actions" rows="11" style="width:400px" data-min-rows='3' class='autoExpand'>1 2 3 2 1
-1 1 2 5 6
-1 5 2 3 4
-2 3 2 3 slip, 3 2 3 2 slip
-fake jab, throw 2 1 2
-jab, left hook to body, left hook to head
-jab to head, cross, left hook to body
-double jab, cross, slip right, overhand right
-5 2 3 2
-1 2, duck to right, 4 3
-</textarea>
+      <textarea id="actions" title="On each line add a different activity command that will be picked at random." class="t" rows="11"></textarea>
     </p>
     <p>Speech Rate</p>
-    <div id="rate" style="width:400px"></div>
+    <div class="t" id="rate"></div>
     <p>
       <button id="start" role="button">start</button>
       <button id="end" role="button">end</button>
