@@ -1,126 +1,195 @@
 
-var interval;
+var csvData, interval;
 
-var actions;
-var intervals;
-var workoutLength;
+var activities, intervals, workoutLength;
 
-var ROUND_OVER = "Round over.";
-var WORKOUT_CANCELLED = "Workout cancelled.";
-var ACTIVITY_OVER = "Done";
+var ROUND_OVER = "Round over.", 
+    WORKOUT_CANCELLED = "Workout cancelled.", 
+    ACTIVITY_OVER = "Done";
 
-$("#start").click(function () {
-    go();
-});
+$(function () {
 
-function go(){
-  
-    actions = getActions();
-    intervals = getIntervals();
-    workoutLength = +getRoundLength() * 60;
+    if (!('speechSynthesis' in window)) {
+        alert("Sorry, speech synthesis is not supported. Try using Chrome or Safari for iOS7.");
+    }
 
-    clearInterval(interval);
+    $("#round, #break, #intervals, #type").buttonset();
 
-    var duration = 5;
-    var elapsed = 0;
+    $("button")
+        .button()
+        .click(function (event) {
+            event.preventDefault();
+        });
 
-    say("Starting in " + duration + " seconds.");
+    $("#rate").slider({
+        range: "max",
+        min: 0,
+        max: 2,
+        value: 1.1,
+        step: 0.01
+    });
 
-    var loop = function () {
+    $("#type :radio").change(function () {
+        var acts = getActivityBank(csvData);
+        loadActivities(acts);
+    });
+
+    $("#start").click(function () {
+        beginRound();
+    });
+
+    $('#wrapper').dialog({
+        autoOpen: false,
+        width:400
+    });
+    
+    $('#about').click(function() {
+        $('#wrapper').dialog('open');
+        return false;
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "data/activities.csv",
+        dataType: "text",
+        success: function (d) { csvData = d; loadActivities(getActivityBank(csvData)); }
+    });
+
+    function beginRound() {
+
+        // defined here so that the user can change them on the fly
+        activities = getActivities();
+        intervals = getIntervals();
+        workoutLength = +getRoundLength() * 60;
+
         clearInterval(interval);
 
-        if (elapsed > workoutLength || actions.length < 1) {
-            endRound();
-            return;
+        var activityDuration = 5;
+        var timeElapsed = 0;
+
+        say("Starting in " + activityDuration + " seconds.");
+
+        var loop = function () {
+            clearInterval(interval);
+
+            
+            if (timeElapsed >= workoutLength || activities.length < 1) {
+                beginBreak();
+                return;
+            }
+
+            if (timeElapsed > 0) say(ACTIVITY_OVER);
+
+            activityDuration = +getInterval();
+            timeElapsed += activityDuration;
+
+            say(getCommand(activityDuration));
+            interval = setInterval(loop, activityDuration * 1000);
+        };
+
+        interval = setInterval(loop, activityDuration * 1000);
+
+    }
+
+    $("#end").click(function () {
+        window.speechSynthesis.cancel();
+        clearInterval(interval);
+        say(WORKOUT_CANCELLED);
+    });
+
+    function say(text) {
+        var msg = new SpeechSynthesisUtterance();
+        var voices = window.speechSynthesis.getVoices();
+        msg.voiceURI = 'native';
+        msg.volume = 1;
+        msg.rate = getSpeechRate();
+        msg.text = text;
+        msg.lang = 'en-US';
+
+        console.log('"' + text + '"');
+        speechSynthesis.speak(msg);
+    }
+
+    function getActivity() {
+        return activities[Math.floor(Math.random() * activities.length)];
+    }
+
+    function getInterval() {
+        return intervals[Math.floor(Math.random() * intervals.length)];
+    }
+
+    function getCommand(time) {
+        var activity = getActivity();
+        activities.remove(activity);
+        return time + " seconds of " + activity;
+    }
+
+    function beginBreak() {
+        window.speechSynthesis.cancel();
+        say(ROUND_OVER);
+        window.setTimeout(beginRound, +getBreakLength() * 1000)
+    }
+
+    function getActivities() {
+        return $("#activities").val()
+            .split("\n")
+            // remove empty/null/undefined components
+            .filter(function (e) { return e === 0 || e });
+    }
+
+    function getIntervals() {
+        return $('#intervals input:checkbox:checked').map(function () {
+            return +this.value;
+        }).get();
+    }
+
+    function getRoundLength() {
+        return +$("#round input:radio:checked").val();
+    }
+
+    function getBreakLength() {
+        return +$("#break input:radio:checked").val();
+    }
+
+    function getSpeechRate() {
+        return +$("#rate").slider("values", 0);
+    }
+
+    Array.prototype.remove = function () {
+        var what, a = arguments,
+            L = a.length,
+            ax;
+        while (L && this.length) {
+            what = a[--L];
+            while ((ax = this.indexOf(what)) !== -1) {
+                this.splice(ax, 1);
+            }
         }
-
-        if (elapsed > 0) say(ACTIVITY_OVER);
-
-        duration = +getInterval();
-        elapsed += duration;
-
-        say(getCommand(duration));
-        interval = setInterval(loop, duration * 1000);
+        return this;
     };
 
-    interval = setInterval(loop, duration * 1000);
 
-}
+    function getActivityBank(d) {
+        var a = $.csv.toObjects(d);
+        var selected = $("#type :radio:checked").val();
 
-$("#end").click(function () {
-    window.speechSynthesis.cancel();
-    clearInterval(interval);
-    say(WORKOUT_CANCELLED);
-});
-
-function say(text) {
-    var msg = new SpeechSynthesisUtterance();
-    var voices = window.speechSynthesis.getVoices();
-    msg.voiceURI = 'native';
-    msg.volume = 1;
-    msg.rate = getSpeechRate();
-    msg.text = text;
-    msg.lang = 'en-US';
-
-    console.log('"' + text + '"');
-    speechSynthesis.speak(msg);
-}
-
-function getAction() {
-    return actions[Math.floor(Math.random() * actions.length)];
-}
-
-function getInterval() {
-    return intervals[Math.floor(Math.random() * intervals.length)];
-}
-
-function getCommand(time) {
-    var action = getAction();
-    actions.remove(action);
-    return time + " seconds of " + action;
-}
-
-function endRound() {
-    window.speechSynthesis.cancel();
-    say(ROUND_OVER);
-    window.setTimeout(go, +getBreakLength() * 1000 )
-}
-
-function getActions() {
-    return $("#actions").val()
-        .split("\n")
-    // remove empty/null/undefined components
-        .filter(function (e) { return e === 0 || e });
-}
-
-function getIntervals() {
-    return $('#intervals input:checkbox:checked').map(function () {
-        return +this.value;
-    }).get();
-}
-
-function getRoundLength() {
-    return +$("#round input:radio:checked").val();
-}
-
-function getBreakLength() {
-    return +$("#break input:radio:checked").val();
-}
-
-function getSpeechRate() {
-    return +$("#rate").slider("values", 0);
-}
-
-Array.prototype.remove = function () {
-    var what, a = arguments,
-        L = a.length,
-        ax;
-    while (L && this.length) {
-        what = a[--L];
-        while ((ax = this.indexOf(what)) !== -1) {
-            this.splice(ax, 1);
+        var selected_a = [];
+        for (var i = 0; i < a.length; i++) {
+            selected_a.push(a[i][selected])
         }
-    }
-    return this;
-};
 
+        return selected_a.filter(function (n) { return n != undefined && n != "" });
+    }
+
+    function loadActivities(activities) {
+
+        $("#activities").text("");
+
+        for (var i = 0; i < activities.length; i++) {
+            $("#activities").append(activities[i] + "\n");
+        }
+
+        $("#activities").attr("rows", activities.length + 1);
+    }
+
+});

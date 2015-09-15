@@ -8,13 +8,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="js/jquery.csv-0.71.min.js"></script>
     <style>
-      p{
+      p, h2{
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size:16px;
+      }
+      
+      #wrapper{
+        font-size: 14px;
       }
       
       textarea{  
-      
       
         font-size:14px;
         border-radius:8px;
@@ -28,74 +30,17 @@
       .right{
         text-align:right;
       }
-    </style>
-    <script>
-      var csv_data;
       
-      $(function() {
-        
-        
-        if (!('speechSynthesis' in window)){
-            alert("Sorry, speech synthesis is not supported. Try using Chrome or Safari for iOS7.");
-        }
-
-        $( "#round, #break, #intervals, #type" ).buttonset();
-        
-        $( "button" )
-          .button()
-          .click(function( event ) {
-            event.preventDefault();
-          });
-        
-        $( "#rate" ).slider({
-            range: "max",
-            min: 0,
-            max: 2,
-            value: 1.1,
-            step: 0.01
-        });
-          
-        $.ajax({
-            type: "GET",
-            url: "data/activities.csv",
-            dataType: "text",
-            success: function(d) {csv_data = d; loadActivities(getActivityBank(csv_data));}
-         });         
-      
-      
-      $("#type :radio").change(function(){
-          var acts = getActivityBank(csv_data);
-          loadActivities(acts);
-      });
-      
-      function getActivityBank(d){
-            var a = $.csv.toObjects(d);
-            var selected = $("#type :radio:checked").val();
-             
-            var selected_a = [];
-            for (var i = 0 ; i < a.length ; i++){
-                selected_a.push(a[i][selected])
-            }
-              
-            return selected_a.filter(function(n){ return n != undefined && n != "" }); 
+      .hidden{
+        visibility: collapse;
       }
-
-      function loadActivities(activities){
-        
-              $("#actions").text("");
-
-              for(var i = 0; i < activities.length ; i++){
-                $("#actions").append(activities[i] + "\n");
-              }
-             
-              $("#actions").attr("rows", activities.length + 1);
-       }
-       
-             });
-    </script>
+    </style>
   </head>
   
   <body>
+    
+    <h2>Drills</h2>
+    
     <table class="t">
       <tr>
         <td>
@@ -107,7 +52,7 @@
       </tr>
       <tr>
         <td>
-          <p id="round" class="ui-buttonset">
+          <p id="round" >
             <input type="radio" id="r1" name="round" value="1">
             <label for="r1" role="button">1</label>
             <input type="radio" id="r2" name="round" checked="checked" value="2">
@@ -117,7 +62,7 @@
           </p>
         </td>
         <td class="right">
-          <p id="break" class="ui-buttonset">
+          <p id="break">
             <input type="radio" id="b1" name="break" value="30">
             <label for="b1" role="button">30</label>
             <input type="radio" id="b2" name="break" checked="checked" value="60">
@@ -129,7 +74,7 @@
       </tr>
     </table>
     <p>Activity Intervals (sec)</p>
-    <p id="intervals" class="ui-buttonset">
+    <p id="intervals">
       <input type="checkbox" id="check1" value="10">
       <label for="check1" role="button">10</label>
       <input type="checkbox" id="check2" checked="checked" value="20">
@@ -143,29 +88,40 @@
       <input type="checkbox" id="check6" value="60">
       <label for="check6" role="button">60</label>
     </p>
-    <p>Activities (you can edit these!)</p>
-    <p id="type" class="ui-buttonset">
+    <p>Activities (you can edit or add to these!)</p>
+    <p id="type">
       <input type="radio" id="t1" name="type" value="Calisthenics">
       <label for="t1" role="button">Calisthenics</label>
       <input type="radio" id="t2" name="type" checked="checked" value="Combos">
       <label for="t2" role="button">Combos</label>
-      <input type="radio" id="t3" name="type" value="Drills">
-      <label for="t3" role="button">Drills</label>
+      <input type="radio" id="t3" name="type" value="Cardio">
+      <label for="t3" role="button">Cardio</label>
     </p>
     <p>
-      <textarea id="actions" title="On each line add a different activity command that will be picked at random." class="t" rows="11"></textarea>
+      <textarea id="activities" class="t" rows="11"></textarea>
     </p>
     <p>Speech Rate</p>
     <div class="t" id="rate"></div>
     <p>
       <button id="start" role="button">start</button>
       <button id="end" role="button">end</button>
+      <button id="about" role="button">about</button>
     </p>
     <br/>
     <p>
       <a href="https://github.com/crclayton/drills">Fork me on GitHub</a>
     </p>
-    <script src="./js/drills.js"></script>
+    
+    <div id="wrapper" title="About Drills">
+          <span class="ui-icon ui-icon-info" style="float:left; margin-top: 16px; margin-right:10px"></span>
+
+      <p><b>This program creates and speaks workout drills.</b></p>
+      <p>It will construct the drill randomly from the listed activities, read the activities out-loud until the round length is up, then start again after the break.</p>     
+      <p>There are some pre-defined activity categories, but you can edit these and create your own routine that the program will read. </p>
+      <p>You can also modify the activity interval lengths, the round length, and the break length. Also, don't forget to hydrate.</p>
+    </div>
+    
   </body>
+  <script src="./js/drills.js"></script>
 
 </html>
