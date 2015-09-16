@@ -33,7 +33,7 @@ $(function () {
         range: "max",
         min: 0,
         max: 2,
-        value: 1.1,
+        value: 1.2,
         step: 0.01
     });
 
@@ -134,7 +134,7 @@ $(function () {
 
     function beginBreak() {
         window.speechSynthesis.cancel();
-        say(ROUND_OVER);
+        say(ROUND_OVER + " " + getBreakLength.toString() + " second break.");
         window.setTimeout(beginRound, +getBreakLength() * 1000)
     }
 

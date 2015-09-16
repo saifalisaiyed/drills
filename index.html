@@ -1,127 +1,147 @@
 <html>
-  
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="js/jquery.csv-0.71.min.js"></script>
-    <style>
-      p, h2{
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-      
-      #wrapper{
-        font-size: 14px;
-      }
-      
-      textarea{  
-      
-        font-size:14px;
-        border-radius:8px;
-        border:1px solid  #c1c1c1;
-      }
-      
-      .t{
-        width:355px;
-      }
-      
-      .right{
-        text-align:right;
-      }
-      
-      .hidden{
-        visibility: collapse;
-      }
-    </style>
-  </head>
-  
-  <body>
-    
-    <h2>Drills</h2>
-    
-    <table class="t">
-      <tr>
-        <td>
-          <p>Round Length (min)</p>
-        </td>
-        <td class="right">
-          <p>Break Length (seconds)</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p id="round" >
-            <input type="radio" id="r1" name="round" value="1">
-            <label for="r1" role="button">1</label>
-            <input type="radio" id="r2" name="round" checked="checked" value="2">
-            <label for="r2" role="button">2</label>
-            <input type="radio" id="r3" name="round" value="3">
-            <label for="r3" role="button">3</label>
-          </p>
-        </td>
-        <td class="right">
-          <p id="break">
-            <input type="radio" id="b1" name="break" value="30">
-            <label for="b1" role="button">30</label>
-            <input type="radio" id="b2" name="break" checked="checked" value="60">
-            <label for="b2" role="button">60</label>
-            <input type="radio" id="b3" name="break" value="90">
-            <label for="b3" role="button">90</label>
-          </p>
-        </td>
-      </tr>
-    </table>
-    <p>Activity Intervals (sec)</p>
-    <p id="intervals">
-      <input type="checkbox" id="check1" value="10">
-      <label for="check1" role="button">10</label>
-      <input type="checkbox" id="check2" checked="checked" value="20">
-      <label for="check2" role="button">20</label>
-      <input type="checkbox" id="check3" checked="checked" value="30">
-      <label for="check3" role="button">30</label>
-      <input type="checkbox" id="check4" checked="checked" value="40">
-      <label for="check4" role="button">40</label>
-      <input type="checkbox" id="check5" value="50">
-      <label for="check5" role="button">50</label>
-      <input type="checkbox" id="check6" value="60">
-      <label for="check6" role="button">60</label>
-    </p>
-    <p>Activities (you can edit or add to these!)</p>
-    <p id="type">
-      <input type="radio" id="t1" name="type" value="Calisthenics">
-      <label for="t1" role="button">Calisthenics</label>
-      <input type="radio" id="t2" name="type" checked="checked" value="Combos">
-      <label for="t2" role="button">Combos</label>
-      <input type="radio" id="t3" name="type" value="Cardio">
-      <label for="t3" role="button">Cardio</label>
-    </p>
-    <p>
-      <textarea id="activities" class="t" rows="11"></textarea>
-    </p>
-    <p>Speech Rate</p>
-    <div class="t" id="rate"></div>
-    <p>
-      <button id="start" role="button">start</button>
-      <button id="end" role="button">end</button>
-      <button id="about" role="button">about</button>
-    </p>
-    <br/>
-    <p>
-      <a href="https://github.com/crclayton/drills">Fork me on GitHub</a>
-    </p>
-    
-    <div id="wrapper" title="About Drills">
-          <span class="ui-icon ui-icon-info" style="float:left; margin-top: 16px; margin-right:10px"></span>
 
-      <p><b>This program creates and speaks workout drills.</b></p>
-      <p>It will construct the drill randomly from the listed activities, read the activities out-loud until the round length is up, then start again after the break.</p>     
-      <p>There are some pre-defined activity categories, but you can edit these and create your own routine that the program will read. </p>
-      <p>You can also modify the activity interval lengths, the round length, and the break length. Also, don't forget to hydrate.</p>
-    </div>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="js/jquery.csv-0.71.min.js"></script>
+  <style>
+    @import url(http://fonts.googleapis.com/css?family=Raleway);
+
+    *{
+      font-family: 'Raleway';
+    }
     
-  </body>
-  <script src="./js/drills.js"></script>
+    h2{
+      margin:5px 2px 10px 2px;
+    }
+    
+    label{
+      font-size:13px;
+      margin:5px 2px 15px 2px;
+    }
+    
+    #wrapper {
+      font-size: 14px;
+    }
+    
+    #rate{
+      margin-top:5px;
+    }
+    
+    textarea {
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #c1c1c1;
+    }
+    
+    .t {
+      width: 335px;
+    }
+    
+
+    .right {
+      text-align: right;
+    }
+    
+    .hidden {
+      visibility: collapse;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>DRILLS</h2>
+
+  <div class="t">
+    <div style="float:left">
+      <label>Round Length (min)</label>
+
+
+      <div id="round">
+        <input type="radio" id="r1" name="round" value="1">
+        <label for="r1" role="button">1</label>
+        <input type="radio" id="r2" name="round" checked="checked" value="2">
+        <label for="r2" role="button">2</label>
+        <input type="radio" id="r3" name="round" value="3">
+        <label for="r3" role="button">3</label>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <label>Break Length (seconds)</label>
+      <div id="break">
+        <input type="radio" id="b1" name="break" value="30">
+        <label for="b1" role="button">30</label>
+        <input type="radio" id="b2" name="break" checked="checked" value="60">
+        <label for="b2" role="button">60</label>
+        <input type="radio" id="b3" name="break" value="90">
+        <label for="b3" role="button">90</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- intervals -->
+  <label> Intervals (sec)</label>
+  <div id="intervals">
+    <input type="checkbox" id="check1" value="10">
+    <label for="check1" role="button">10</label>
+    <input type="checkbox" id="check2" checked="checked" value="20">
+    <label for="check2" role="button">20</label>
+    <input type="checkbox" id="check3" checked="checked" value="30">
+    <label for="check3" role="button">30</label>
+    <input type="checkbox" id="check4" checked="checked" value="40">
+    <label for="check4" role="button">40</label>
+    <input type="checkbox" id="check5" value="50">
+    <label for="check5" role="button">50</label>
+    <input type="checkbox" id="check6" value="60">
+    <label for="check6" role="button">60</label>
+  </div>
+  
+  <!-- activities -->
+  <label>Activities (you can edit or add to these!)</label>
+  <div id="type">
+    <input type="radio" id="t1" name="type" value="Calisthenics">
+    <label for="t1" role="button">Calisthenics</label>
+    <input type="radio" id="t2" name="type" checked="checked" value="Combos">
+    <label for="t2" role="button">Combos</label>
+    <input type="radio" id="t3" name="type" value="Cardio">
+    <label for="t3" role="button">Cardio</label>
+   
+  </div>
+  
+  <textarea id="activities" class="t" rows="11"></textarea>
+
+  <br/><br/>
+ 
+  <label>Speech Rate</label>
+  <div class="t" id="rate"></div>
+
+  <br/>
+  <div>
+    <button id="start" role="button">start</button>
+    <button id="end" role="button">end</button>
+    <button id="about" role="button">about</button>
+  </div>
+  
+  <p>
+    <a href="https://github.com/crclayton/drills">Fork me on GitHub</a>
+  </p>
+
+  <div id="wrapper" title="About Drills">
+    <span class="ui-icon ui-icon-info" style="float:left; margin-top: 14px; margin-right:10px"></span>
+
+    <p><b>This program creates and speaks workout drills.</b></p>
+    <p>It will construct the drill randomly from the listed activities, read the activities out-loud until the round length
+      is up, then start again after the break.</p>
+    <p>There are some pre-defined activity categories, but you can edit these and create your own routine that the program will
+      read. </p>
+    <p>You can also modify the activity interval lengths, the round length, and the break length. Also, don't forget to hydrate.</p>
+  </div>
+
+</body>
+<script src="./js/drills.js"></script>
 
 </html>
