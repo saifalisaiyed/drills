@@ -1,25 +1,13 @@
 
-var csvData, interval;
+var jsonData, interval;
 
 var activities, intervals, workoutLength;
 
-var ROUND_OVER = "Round over.", 
-    WORKOUT_CANCELLED = "Workout cancelled.", 
+var ROUND_OVER = "Round over.",
+    WORKOUT_CANCELLED = "Workout cancelled.",
     ACTIVITY_OVER = "Done";
 
 $(function () {
-
-    var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-        // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
-    var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
-    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-        // At least Safari 3+: "[object HTMLElementConstructor]"
-    var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
-    var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
-
-    if (!isChrome && !isSafari) {
-        alert("Sorry, speech synthesis is not supported on your browser... Try using Chrome or Safari for iOS7.");
-    }
 
     $("#round, #break, #intervals, #type").buttonset();
 
@@ -38,30 +26,53 @@ $(function () {
     });
 
     $("#type :radio").change(function () {
-        var acts = getActivityBank(csvData);
-        loadActivities(acts);
+        var acts = getSelectedActivities(jsonData);
+        renameActivities(acts);
     });
 
     $("#start").click(function () {
         beginRound();
     });
 
-    $('#wrapper').dialog({
+    $('#aboutDialog').dialog({
+        modal: true,
         autoOpen: false,
-        width:400
+        width: 400,
+        buttons: {
+            Ok: function () {
+                $(this).dialog("close");
+            }
+        }
     });
-    
-    $('#about').click(function() {
-        $('#wrapper').dialog('open');
+
+    $('#about').click(function () {
+        $('#aboutDialog').dialog('open');
         return false;
+    });
+
+    $('#sorry').dialog({
+        modal: true,
+        autoOpen: false,
+        width: 400,
+        buttons: {
+            Ok: function () {
+                $(this).dialog("close");
+            }
+        }
     });
 
     $.ajax({
         type: "GET",
-        url: "data/activities.csv",
-        dataType: "text",
-        success: function (d) { csvData = d; loadActivities(getActivityBank(csvData)); }
+        url: "activities.json",
+        dataType: "json",
+        success: function (d) { jsonData = d; renameActivities(getSelectedActivities(jsonData)); }
     });
+
+
+    if (window.SpeechSynthesisUtterance === undefined) {
+        $('#sorry').dialog('open');
+    }
+
 
     function beginRound() {
 
@@ -80,7 +91,7 @@ $(function () {
         var loop = function () {
             clearInterval(interval);
 
-            
+
             if (timeElapsed >= workoutLength || activities.length < 1) {
                 beginBreak();
                 return;
@@ -141,7 +152,7 @@ $(function () {
     function getActivities() {
         return $("#activities").val()
             .split("\n")
-            // remove empty/null/undefined components
+        // remove empty/null/undefined components
             .filter(function (e) { return e === 0 || e });
     }
 
@@ -177,19 +188,12 @@ $(function () {
     };
 
 
-    function getActivityBank(d) {
-        var a = $.csv.toObjects(d);
+    function getSelectedActivities(activities) {
         var selected = $("#type :radio:checked").val();
-
-        var selected_a = [];
-        for (var i = 0; i < a.length; i++) {
-            selected_a.push(a[i][selected])
-        }
-
-        return selected_a.filter(function (n) { return n != undefined && n != "" });
+        return activities[selected];
     }
 
-    function loadActivities(activities) {
+    function renameActivities(activities) {
 
         $("#activities").text("");
 

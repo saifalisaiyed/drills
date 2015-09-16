@@ -3,19 +3,18 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-        <link rel="stylesheet" href="css/stylesheet.css">
-        
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="js/jquery.csv-0.71.min.js"></script>
+    
+    <link rel="stylesheet" href="css/Aristo.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
 
   </head>
   
-  <body>
+  <body style="margin:10px">
     <h2>DRILLS</h2>
-    <nav>
+    <div id="column">
       <div style="float:left">
         <!-- round length -->
         <label>Round Length (min)</label>
@@ -84,7 +83,7 @@
       <p>
         <a href="https://github.com/crclayton/drills">Fork me on GitHub</a>
       </p>
-      <div id="wrapper" title="About Drills">
+      <div id="aboutDialog" title="About Drills">
         <span class="ui-icon ui-icon-info" style="float:left; margin-top: 14px; margin-right:10px"></span>
         <p>
           <b>This program creates and speaks workout drills.</b>
@@ -95,8 +94,15 @@
           read.</p>
         <p>You can also modify the activity interval lengths, the round length, and the break length. Also, don't forget to hydrate.</p>
       </div>
-    </nav>
+      <div id="sorry" title="Not Supported">
+        <span class="ui-icon ui-icon-info" style="float:left; margin-top: 14px; margin-right:10px"></span>
+        <p style="font-weight:bold">
+          Sorry, your browser doesn't support text-to-speech.
+        </p>
+        <p>This program uses Google's Speech Synthesis API which your browser doesn't support. Try Chrome or Safari for iOS7.</p>
+      </div>
+    </div>
   </body>
-  <script src="./js/drills.js"></script>
+  <script src="drills.js"></script>
 
 </html>
