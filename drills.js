@@ -194,14 +194,16 @@ $(function () {
     }
 
     function renameActivities(activities) {
-
-        $("#activities").text("");
-
+        var txtArea = document.getElementById("activities");
+        
+        txtArea.value = "";
         for (var i = 0; i < activities.length; i++) {
-            $("#activities").append(activities[i] + "\n");
+            // was using jQuery append before but that meant
+            // after editing the textarea manually, I couldn't
+            // update it using javascript.
+           	txtArea.value += activities[i] + "\n";
         }
 
         $("#activities").attr("rows", activities.length + 1);
     }
-
 });
